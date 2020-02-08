@@ -3,6 +3,7 @@
 namespace Modules\Auth\Service;
 
 use Auth;
+use Modules\Veclu\Models\Setting;
 use Validator;
 
 class AuthService
@@ -17,7 +18,7 @@ class AuthService
             'password' => 'required']);
 
         if ($valid->fails()) {
-            return responseError($valid->errors()->all());
+            return serviceError($valid->errors()->all());
         }
 
         $user = $model::where([$type => $data[$type], 'password' => bcrypt($data['password'])])->first();
@@ -25,15 +26,15 @@ class AuthService
             ->attempt([$type => $data[$type], 'password' => $data['password']], false, false);
 
         if ($user) {
-            return responseOk($user);
+            return serviceOk($user);
         } else {
-            return responseError(trans('auth::messages.invalid_data'));
+            return serviceError(trans('auth::messages.invalid_data'));
         }
 
         // if (Auth::guard($guard)->attempt([
         //     $type => $data[$type],
         //     'password' => $data['password']], $remember)) {
-        //     return responseOk(true);
+        //     return serviceOk(true);
         // }
 
         // return ['is_successful' => false, 'message' => trans('auth::messages.not_register')];
@@ -65,15 +66,15 @@ class AuthService
 
         $user->save();
 
-        return responseOk($user);
+        return serviceOk($user);
 
         // if (Auth::guard($guard)->attempt([
         //     $type => $data[$type],
         //     'password' => $data['password']], $remember)) {
-        //     return responseOk(true);
+        //     return serviceOk(true);
         // }
 
-        // return responseError(trans('auth::messages.invalid_data'));
+        // return serviceError(trans('auth::messages.invalid_data'));
 
     }
 
@@ -84,56 +85,40 @@ class AuthService
 
         if ($user && ((time() - $user->updated_at) > Setting::get('sms_period'))) {
 
-            $user->activation_sms = mt_rand(100, 999);
-            $user->activation_sms = 1111;
+            $user->activation_code = mt_rand(100, 999);
+            $user->activation_code = 1111;
 
             // $client = new \GuzzleHttp\Client();
-            // $res = $client->get('https://api.kavenegar.com/v1/736250476F2F305551614E5A4C5556505563563869413D3D/verify/lookup.json', ['query' => ['template' => 'phoenixVerify', 'receptor' => $mobile, 'token' => $user->activation_sms]]);
+            // $res = $client->get('https://api.kavenegar.com/v1/736250476F2F305551614E5A4C5556505563563869413D3D/verify/lookup.json', ['query' => ['template' => 'phoenixVerify', 'receptor' => $mobile, 'token' => $user->activation_code]]);
 
             // if ($res->getStatusCode() != 200) {
             //     return ['is_successful' => false, 'message' => trans('auth::messages.sms_send_error')];
             // }
 
             $user->save();
-            return responseOk($user);
+            return serviceOk($user);
         } elseif (!$user) {
-            return responseError(trans('auth::messages.not_register'));
+            return serviceError(trans('auth::messages.not_register'));
 
         } else {
-            return responseError(trans('auth::messages.wait_minutes'));
+            return serviceError(trans('auth::messages.wait_minutes'));
         }
 
     }
 
     public function check_activation_code($mobile, $activation_code, $model, $guard)
     {
-        $activation_sms = fa_num_to_en($activation_code);
+        $activation_code = fa_num_to_en($activation_code);
         $mobile = fa_num_to_en($mobile);
 
-        $$user = $model::where(['mobile' => $mobile, 'activation_sms' => $activation_sms])->first();
+        $user = $model::where(['mobile' => $mobile, 'activation_code' => $activation_code])->first();
 
-        if ($$user) {
-            return responseOk($user);
+        if ($user) {
+            return serviceOk($user);
         } else {
-            return responseError(trans('auth::messages.not_register'));
+            return serviceError(trans('auth::messages.not_register'));
         }
 
-        // if ($user) {
-        //     if ($request->filled('is_cookie') && $request->is_cookie) {
-        //         Auth::guard($guard)->loginUsingId($user->id);
-        //         return [
-        //             'is_successful' => true,
-        //             'data' => [true],
-        //         ];
-        //     } else {
-        //         return [
-        //             'is_successful' => true,
-        //             'data' => ['token' => $user->createToken('user_api_token_' . $user->id, ['user_panel'])->accessToken],
-        //         ];
-        //     }
-        // }
-
-        // return responseError(false)
     }
 
     public function set_session($guard, $user)
@@ -149,7 +134,7 @@ class AuthService
         $cookie = $this->getCookieDetails($token);
 
         return response()
-            ->json(responseOk(true), 200)
+            ->json(serviceOk(true), 200)
             ->cookie($cookie['name'],
                 $cookie['value'],
                 $cookie['minutes'],

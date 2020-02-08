@@ -30,9 +30,10 @@ if (!function_exists('fa_num_to_en')) {
 /**Response Structure */
 if (!function_exists('responseOk')) {
 
-    function responseOk($data)
+    function responseOk($data, $status = 200)
     {
-        return ['is_successful' => true, 'data' => $data];
+
+        return response()->json(['is_successful' => true, 'data' => $data], $status);
 
     }
 
@@ -40,7 +41,29 @@ if (!function_exists('responseOk')) {
 
 if (!function_exists('responseError')) {
 
-    function responseError($message)
+    function responseError($message, $status = 200)
+    {
+        return response()->json(['is_successful' => false, 'message' => $message], $status);
+
+    }
+
+}
+
+/**Service Return Structure */
+if (!function_exists('serviceOk')) {
+
+    function serviceOk($data)
+    {
+
+        return ['is_successful' => true, 'data' => $data];
+
+    }
+
+}
+
+if (!function_exists('serviceError')) {
+
+    function serviceError($message)
     {
         return ['is_successful' => false, 'message' => $message];
 

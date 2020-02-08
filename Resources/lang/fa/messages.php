@@ -1,5 +1,6 @@
 <?php
 return array(
+    'done'=>'عملیات با موفقیت انجام شد',
     'mobile' => 'موبایل',
     'password' => 'رمز عبور',
     'home' => 'خانه',
