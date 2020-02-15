@@ -3,7 +3,7 @@
 namespace Modules\Auth\Service;
 
 use Auth;
-use Modules\Veclu\Models\Setting;
+use Modules\Biav\Models\Setting;
 use Validator;
 
 class AuthService

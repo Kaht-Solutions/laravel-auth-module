@@ -14,7 +14,7 @@ class TwoStepExampleController extends Controller
     {
         $data = $request->all();
         $guard = 'api_coach';
-        $model = '\Modules\Veclu\Models\VecluCoach';
+        $model = '\Modules\Biav\Models\BiavCoach';
 
         $authService = new AuthService;
         $result = $authService->send_activation_code($request->mobile, $model);
@@ -33,7 +33,7 @@ class TwoStepExampleController extends Controller
     {
         $data = $request->all();
         $guard = 'api_coach';
-        $model = '\Modules\Veclu\Models\VecluCoach';
+        $model = '\Modules\Biav\Models\BiavCoach';
 
         $authService = new AuthService;
         $result = $authService->check_activation_code($request->mobile, $request->activation_code, $model, $guard);

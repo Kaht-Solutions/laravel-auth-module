@@ -2,6 +2,26 @@
 
 if (!function_exists('generateRandomString')) {
 
+    function FunctionName(Type $var = null)
+    {
+        // Schema::disableForeignKeyConstraints();
+
+        // $tableNames = Schema::getConnection()->getDoctrineSchemaManager()->listTableNames();
+
+        // foreach ($tableNames as $name) {
+        //     //if you don't want to truncate migrations
+        //     if ($name == 'migrations') {
+        //         continue;
+        //     }
+        //     DB::table($name)->truncate();
+        // }
+
+        // Schema::enableForeignKeyConstraints();
+
+    }
+}
+if (!function_exists('generateRandomString')) {
+
     function generateRandomString($length = 21)
     {
         $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
