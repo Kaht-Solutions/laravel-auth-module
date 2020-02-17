@@ -31,14 +31,6 @@ class AuthService
             return serviceError(trans('auth::messages.invalid_data'));
         }
 
-        // if (Auth::guard($guard)->attempt([
-        //     $type => $data[$type],
-        //     'password' => $data['password']], $remember)) {
-        //     return serviceOk(true);
-        // }
-
-        // return ['is_successful' => false, 'message' => trans('auth::messages.not_register')];
-
     }
 
     public function register($data, $model = '\Modules\Auth\Models\User', $guard = 'web', $type = 'mobile', $remember = true)
@@ -68,14 +60,6 @@ class AuthService
 
         return serviceOk($user);
 
-        // if (Auth::guard($guard)->attempt([
-        //     $type => $data[$type],
-        //     'password' => $data['password']], $remember)) {
-        //     return serviceOk(true);
-        // }
-
-        // return serviceError(trans('auth::messages.invalid_data'));
-
     }
 
     public function send_activation_code($mobile, $model)
@@ -89,10 +73,10 @@ class AuthService
             $user->activation_code = 1111;
 
             // $client = new \GuzzleHttp\Client();
-            // $res = $client->get('https://api.kavenegar.com/v1/736250476F2F305551614E5A4C5556505563563869413D3D/verify/lookup.json', ['query' => ['template' => 'phoenixVerify', 'receptor' => $mobile, 'token' => $user->activation_code]]);
+            // $res = $client->get(call sms api here);
 
             // if ($res->getStatusCode() != 200) {
-            //     return ['is_successful' => false, 'message' => trans('auth::messages.sms_send_error')];
+            //     return serviceError(trans('auth::messages.sms_send_error'));
             // }
 
             $user->save();
