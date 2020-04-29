@@ -50,10 +50,13 @@ if (!function_exists('fa_num_to_en')) {
 /**Response Structure */
 if (!function_exists('responseOk')) {
 
-    function responseOk($data, $status = 200)
+    function responseOk($data, $status = 200, $message = null)
     {
+        if (!$message) {
+            $message = trans("auth::messages.done");
+        }
 
-        return response()->json(['is_successful' => true, 'data' => $data], $status);
+        return response()->json(['is_successful' => true, 'data' => $data, 'message' => $message], $status);
 
     }
 
@@ -163,7 +166,7 @@ if (!function_exists('upload_file')) {
         } elseif ($image != "") {
             return false;
         }
-        return '';
+        return false;
     }
 
 }

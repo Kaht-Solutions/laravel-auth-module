@@ -3,6 +3,8 @@
 namespace Modules\Auth\Service;
 
 use Auth;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Schema;
 use Modules\Setting\Models\Setting;
 use Validator;
 
@@ -43,7 +45,7 @@ class AuthService
         ]);
 
         if ($valid->fails()) {
-            return $valid->errors()->all();
+            return serviceError($valid->errors()->all());
         }
 
         $user = new $model;
@@ -52,6 +54,18 @@ class AuthService
 
             if ($key == 'password') {
                 $user->$key = bcrypt($value);
+            }
+
+            if ($key == 'birth_date') {
+                $birth_date = explode('/', $data['birth_date']);
+                $birth_date_g = \Morilog\Jalali\CalendarUtils::toGregorian($birth_date[0], $birth_date[1], $birth_date[2]);
+                $birth_date_g = Carbon::createFromDate($birth_date_g[0], $birth_date_g[1], $birth_date_g[2]);
+                $user->$key = $birth_date_g;
+            }
+
+            $isActivationCodeExist = Schema::connection("mysql")->hasColumn($model_obj->getTableName(), 'activation_code');
+            if ($isActivationCodeExist) {
+                $user->activation_code = 1111;
             }
 
         }
