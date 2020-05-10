@@ -1,6 +1,6 @@
 <?php
 return array(
-    'done'=>'عملیات با موفقیت انجام شد',
+    'done' => 'عملیات با موفقیت انجام شد',
     'mobile' => 'موبایل',
     'password' => 'رمز عبور',
     'home' => 'خانه',
@@ -10,4 +10,6 @@ return array(
     'password_confirmation' => 'تاییدیه رمز عبور',
     'register' => 'ثبت نام',
     'registerd_before' => 'این شماره قبلا ثبت شده است',
+    'not_register' => 'این شماره ثبت نشده است',
+    'wrong_code' => 'کد اشتباه است',
 );

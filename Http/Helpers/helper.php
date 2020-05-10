@@ -66,7 +66,7 @@ if (!function_exists('responseError')) {
 
     function responseError($message, $status = 200)
     {
-        return response()->json(['is_successful' => false, 'message' => $message], $status);
+        return response()->json(['is_successful' => false, 'message' => $message, 'data' => []], $status);
 
     }
 

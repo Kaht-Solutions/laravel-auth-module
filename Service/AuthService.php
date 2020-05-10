@@ -109,12 +109,15 @@ class AuthService
         $activation_code = fa_num_to_en($activation_code);
         $mobile = fa_num_to_en($mobile);
 
-        $user = $model::where(['mobile' => $mobile, 'activation_code' => $activation_code])->first();
+        $user = $model::where(['mobile' => $mobile])->first();
 
-        if ($user) {
+        if ($user && $user->activation_code == $activation_code) {
             return serviceOk($user);
+        } elseif ($user) {
+            return serviceError(trans('auth::messages.wrong_code'));
         } else {
             return serviceError(trans('auth::messages.not_register'));
+
         }
 
     }
