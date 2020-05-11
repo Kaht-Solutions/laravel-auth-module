@@ -11,5 +11,5 @@ return array(
     'register' => 'ثبت نام',
     'registerd_before' => 'این شماره قبلا ثبت شده است',
     'not_register' => 'این شماره ثبت نشده است',
-    'wrong_code' => 'کد اشتباه است',
+    'wrong_code' => 'کد وارد شده اشتباه است',
 );
