@@ -10,4 +10,4 @@ return array(
     'password_confirmation' => 'تاییدیه رمز عبور',
     'register' => 'ثبت نام',
     'registerd_before' => 'این شماره قبلا ثبت شده است',
-);
+);   
