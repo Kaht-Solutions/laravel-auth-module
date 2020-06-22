@@ -93,13 +93,6 @@ class AuthService
             $user->activation_code = mt_rand(100, 999);
             $user->activation_code = 1111;
 
-            // $client = new \GuzzleHttp\Client();
-            // $res = $client->get('https://api.kavenegar.com/v1/736250476F2F305551614E5A4C5556505563563869413D3D/verify/lookup.json', ['query' => ['template' => 'phoenixVerify', 'receptor' => $mobile, 'token' => $user->activation_code]]);
-
-            // if ($res->getStatusCode() != 200) {
-            //     return ['is_successful' => false, 'message' => trans('auth::messages.sms_send_error')];
-            // }
-
             $user->save();
             return serviceOk($user);
         } elseif (!$user) {
