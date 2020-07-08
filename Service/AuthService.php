@@ -5,7 +5,6 @@ namespace Modules\Auth\Service;
 use Auth;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Schema;
-use Modules\Setting\Models\Setting;
 use Validator;
 
 class AuthService
@@ -76,22 +75,21 @@ class AuthService
 
     }
 
-    public function send_activation_code($mobile, $model)
+    public function send_activation_code($mobile, $model, $setting_model = null)
     {
         $mobile = fa_num_to_en($mobile);
         $user = $model::where('mobile', $mobile)->first();
 
-        if ($user && ((time() - $user->updated_at) > Setting::get('sms_period'))) {
+        if ($setting_model) {
+            $sms_period = $setting_model::get('sms_period');
+        } else {
+            $sms_period = 30;
+        }
+
+        if ($user && ((time() - $user->updated_at) > $sms_period)) {
 
             $user->activation_code = mt_rand(100, 999);
             $user->activation_code = 1111;
-
-            // $client = new \GuzzleHttp\Client();
-            // $res = $client->get(call sms api here);
-
-            // if ($res->getStatusCode() != 200) {
-            //     return serviceError(trans('auth::messages.sms_send_error'));
-            // }
 
             $user->save();
             return serviceOk($user);
