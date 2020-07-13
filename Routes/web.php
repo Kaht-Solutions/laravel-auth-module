@@ -31,22 +31,3 @@ Route::group(['middleware' => ['web']], function () {
     Route::get('/auth/logout', 'UserAuthController@logout');
 
 });
-
-Route::get('/redirect', function (Request $request) {
-
-    // $request->session()->put('state', $state = Str::random(40));
-
-    $query = http_build_query([
-        'client_id' => '1',
-        'redirect_uri' => env('APP_URL').'/final',
-        'response_type' => 'token',
-        'scope' => 'vue_public_scope',
-        // 'state' => $state,
-    ]);
-
-    return redirect(env('APP_URL').'/oauth/authorize?' . $query);
-});
-
-Route::get('final', function (Request $request) {
-    return 'check_url';
-});
