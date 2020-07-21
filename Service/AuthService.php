@@ -17,7 +17,6 @@ class AuthService
         $valid = Validator::make($data, [
             $type => 'required|exists:' . $model_obj->getTableName() . ',' . $type,
             'password' => 'required']);
-
         if ($valid->fails()) {
             return serviceError($valid->errors()->all());
         }
