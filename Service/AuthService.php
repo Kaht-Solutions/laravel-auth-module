@@ -22,8 +22,7 @@ class AuthService
             return serviceError($valid->errors()->all());
         }
 
-        $user = $model::where([$type => $data[$type], 'password' => bcrypt($data['password'])])->first();
-        $user = Auth::guard('web')
+        $user = Auth::guard($guard)
             ->attempt([$type => $data[$type], 'password' => $data['password']], false, false);
 
         if ($user) {
