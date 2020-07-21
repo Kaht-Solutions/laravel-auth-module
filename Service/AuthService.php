@@ -21,7 +21,6 @@ class AuthService
         if ($valid->fails()) {
             return serviceError($valid->errors()->all());
         }
-
         $user = Auth::guard($guard)
             ->attempt([$type => $data[$type], 'password' => $data['password']], false, false);
 
