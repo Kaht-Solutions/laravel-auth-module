@@ -3,6 +3,8 @@
 namespace Modules\Auth\Service;
 
 use Auth;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Schema;
 use Validator;
 
 class AuthService
@@ -15,13 +17,10 @@ class AuthService
         $valid = Validator::make($data, [
             $type => 'required|exists:' . $model_obj->getTableName() . ',' . $type,
             'password' => 'required']);
-
         if ($valid->fails()) {
             return serviceError($valid->errors()->all());
         }
-
-        $user = $model::where([$type => $data[$type], 'password' => bcrypt($data['password'])])->first();
-        $user = Auth::guard('web')
+        $user = Auth::guard($guard)
             ->attempt([$type => $data[$type], 'password' => $data['password']], false, false);
 
         if ($user) {
@@ -29,14 +28,6 @@ class AuthService
         } else {
             return serviceError(trans('auth::messages.invalid_data'));
         }
-
-        // if (Auth::guard($guard)->attempt([
-        //     $type => $data[$type],
-        //     'password' => $data['password']], $remember)) {
-        //     return serviceOk(true);
-        // }
-
-        // return ['is_successful' => false, 'message' => trans('auth::messages.not_register')];
 
     }
 
@@ -50,7 +41,7 @@ class AuthService
         ]);
 
         if ($valid->fails()) {
-            return $valid->errors()->all();
+            return serviceError($valid->errors()->all());
         }
 
         $user = new $model;
@@ -61,19 +52,23 @@ class AuthService
                 $user->$key = bcrypt($value);
             }
 
+            if ($key == 'birth_date') {
+                $birth_date = explode('/', $data['birth_date']);
+                $birth_date_g = \Morilog\Jalali\CalendarUtils::toGregorian($birth_date[0], $birth_date[1], $birth_date[2]);
+                $birth_date_g = Carbon::createFromDate($birth_date_g[0], $birth_date_g[1], $birth_date_g[2]);
+                $user->$key = $birth_date_g;
+            }
+
+            $isActivationCodeExist = Schema::connection("mysql")->hasColumn($model_obj->getTableName(), 'activation_code');
+            if ($isActivationCodeExist) {
+                $user->activation_code = 1111;
+            }
+
         }
 
         $user->save();
 
         return serviceOk($user);
-
-        // if (Auth::guard($guard)->attempt([
-        //     $type => $data[$type],
-        //     'password' => $data['password']], $remember)) {
-        //     return serviceOk(true);
-        // }
-
-        // return serviceError(trans('auth::messages.invalid_data'));
 
     }
 
@@ -109,12 +104,15 @@ class AuthService
         $activation_code = fa_num_to_en($activation_code);
         $mobile = fa_num_to_en($mobile);
 
-        $user = $model::where(['mobile' => $mobile, 'activation_code' => $activation_code])->first();
+        $user = $model::where(['mobile' => $mobile])->first();
 
-        if ($user) {
+        if ($user && $user->activation_code == $activation_code) {
             return serviceOk($user);
+        } elseif ($user) {
+            return serviceError(trans('auth::messages.wrong_code'));
         } else {
             return serviceError(trans('auth::messages.not_register'));
+
         }
 
     }

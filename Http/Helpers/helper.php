@@ -30,6 +30,20 @@ if (!function_exists('generateRandomString')) {
         for ($i = 0; $i < $length; $i++) {
             $randomString .= $characters[rand(0, $charactersLength - 1)];
         }
+        return $randomString;
+    }
+}
+
+if (!function_exists('generateRandomStringWithTime')) {
+
+    function generateRandomStringWithTime($length = 21)
+    {
+        $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $charactersLength = strlen($characters);
+        $randomString = '';
+        for ($i = 0; $i < $length; $i++) {
+            $randomString .= $characters[rand(0, $charactersLength - 1)];
+        }
         return $randomString . time();
     }
 }
@@ -50,10 +64,13 @@ if (!function_exists('fa_num_to_en')) {
 /**Response Structure */
 if (!function_exists('responseOk')) {
 
-    function responseOk($data, $status = 200)
+    function responseOk($data, $status = 200, $message = null)
     {
+        if (!$message) {
+            $message = trans("auth::messages.done");
+        }
 
-        return response()->json(['is_successful' => true, 'data' => $data], $status);
+        return response()->json(['is_successful' => true, 'data' => $data, 'message' => $message], $status);
 
     }
 
@@ -63,7 +80,7 @@ if (!function_exists('responseError')) {
 
     function responseError($message, $status = 200)
     {
-        return response()->json(['is_successful' => false, 'message' => $message], $status);
+        return response()->json(['is_successful' => false, 'message' => $message, 'data' => []], $status);
 
     }
 
@@ -185,7 +202,7 @@ if (!function_exists('upload_file')) {
         } elseif ($image != "" && $base64_image != "") {
             return false;
         }
-        return '';
+        return false;
     }
 
 }
