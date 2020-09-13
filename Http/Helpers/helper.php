@@ -141,8 +141,9 @@ if (!function_exists('make_absolute')) {
 
 if (!function_exists('upload_file')) {
 
-    function upload_file($image, $old_image = null, $obj_id = '', $folder_name = 'uploads')
+    function upload_file($image, $old_image = null, $obj_id = '', $folder_name = 'uploads', $base64_image = null)
     {
+
         if ($image != "" && $image->isValid()) {
 
             if ($old_image) {
@@ -160,7 +161,28 @@ if (!function_exists('upload_file')) {
             $image_url = parse_url(url($destinationPath) . '/' . $fileName, PHP_URL_PATH);
             return $image_url;
 
-        } elseif ($image != "") {
+        } elseif ($base64_image) {
+
+            $data = explode(',', $base64_image);
+            $finfo_instance = finfo_open();
+
+            $extension = explode('/', finfo_buffer($finfo_instance, base64_decode($data[1]), FILEINFO_MIME_TYPE));
+            $destinationPath = $folder_name;
+            $fileName = $obj_id . '_' . generateRandomString() . '.' . $extension[1];
+
+            $ifp = fopen($destinationPath . '/' . $fileName, 'wb');
+
+            fwrite($ifp, base64_decode($data[1]));
+
+            // clean up the file resource
+            fclose($ifp);
+
+            // return $output_file;
+            $image_url = parse_url(url($destinationPath) . '/' . $fileName, PHP_URL_PATH);
+
+            return $image_url;
+
+        } elseif ($image != "" && $base64_image != "") {
             return false;
         }
         return '';
