@@ -161,7 +161,7 @@ if (!function_exists('upload_file')) {
     function upload_file($image, $old_image = null, $obj_id = '', $folder_name = 'uploads', $base64_image = null)
     {
 
-        if ($image != "" && $image->isValid()) {
+        if ($image != "" && !is_string($image) && $image->isValid()) {
 
             if ($old_image) {
                 $image_url = parse_url($old_image);
@@ -181,6 +181,9 @@ if (!function_exists('upload_file')) {
         } elseif ($base64_image) {
 
             $data = explode(',', $base64_image);
+            if (count($data) < 2) {
+                return false;
+            }
             $finfo_instance = finfo_open();
 
             $extension = explode('/', finfo_buffer($finfo_instance, base64_decode($data[1]), FILEINFO_MIME_TYPE));
