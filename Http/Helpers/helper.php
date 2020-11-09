@@ -167,7 +167,10 @@ if (!function_exists('upload_file')) {
                 $image_url = parse_url($old_image);
                 if (isset($image_url['path'])) {
                     $image_url = public_path($image_url['path']);
-                    File::delete($image_url);
+                    try {
+                        File::delete($image_url);
+                    } catch (Throwable $e) {
+                    }
                 }
             }
 
@@ -219,7 +222,10 @@ if (!function_exists('delete_file')) {
             $image_url = parse_url($old_image);
             if (isset($image_url['path'])) {
                 $image_url = public_path($image_url['path']);
-                File::delete($image_url);
+                try {
+                    File::delete($image_url);
+                } catch (Throwable $e) {
+                }
             }
         }
     }
