@@ -161,13 +161,16 @@ if (!function_exists('upload_file')) {
     function upload_file($image, $old_image = null, $obj_id = '', $folder_name = 'uploads', $base64_image = null)
     {
 
-        if ($image != "" && $image->isValid()) {
+        if ($image != "" && !is_string($image) && $image->isValid()) {
 
             if ($old_image) {
                 $image_url = parse_url($old_image);
                 if (isset($image_url['path'])) {
                     $image_url = public_path($image_url['path']);
-                    File::delete($image_url);
+                    try {
+                        File::delete($image_url);
+                    } catch (Throwable $e) {
+                    }
                 }
             }
 
@@ -181,6 +184,9 @@ if (!function_exists('upload_file')) {
         } elseif ($base64_image) {
 
             $data = explode(',', $base64_image);
+            if (count($data) < 2) {
+                return false;
+            }
             $finfo_instance = finfo_open();
 
             $extension = explode('/', finfo_buffer($finfo_instance, base64_decode($data[1]), FILEINFO_MIME_TYPE));
@@ -216,7 +222,10 @@ if (!function_exists('delete_file')) {
             $image_url = parse_url($old_image);
             if (isset($image_url['path'])) {
                 $image_url = public_path($image_url['path']);
-                File::delete($image_url);
+                try {
+                    File::delete($image_url);
+                } catch (Throwable $e) {
+                }
             }
         }
     }
