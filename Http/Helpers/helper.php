@@ -89,10 +89,10 @@ if (!function_exists('responseError')) {
 /**Service Return Structure */
 if (!function_exists('serviceOk')) {
 
-    function serviceOk($data)
+    function serviceOk($data, $status = 200)
     {
 
-        return ['is_successful' => true, 'data' => $data];
+        return ['is_successful' => true, 'data' => $data, 'status' => $status];
 
     }
 
@@ -100,9 +100,9 @@ if (!function_exists('serviceOk')) {
 
 if (!function_exists('serviceError')) {
 
-    function serviceError($message)
+    function serviceError($message, $status = 400)
     {
-        return ['is_successful' => false, 'message' => $message];
+        return ['is_successful' => false, 'message' => $message, 'status' => $status];
 
     }
 

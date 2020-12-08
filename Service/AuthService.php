@@ -16,10 +16,12 @@ class AuthService
 
         $valid = Validator::make($data, [
             $type => 'required|exists:' . $model_obj->getTableName() . ',' . $type,
-            'password' => 'required']);
+            'password' => 'required'
+        ]);
         if ($valid->fails()) {
             return serviceError($valid->errors()->all());
         }
+ 
         $user = Auth::guard($guard)
             ->attempt([$type => $data[$type], 'password' => $data['password']], false, false);
 
@@ -28,7 +30,6 @@ class AuthService
         } else {
             return serviceError(trans('auth::messages.invalid_data'));
         }
-
     }
 
     public function register($data, $model = '\Modules\Auth\Models\User', $guard = 'web', $type = 'mobile', $remember = true)
@@ -63,13 +64,11 @@ class AuthService
             if ($isActivationCodeExist) {
                 $user->activation_code = 1111;
             }
-
         }
 
         $user->save();
 
         return serviceOk($user);
-
     }
 
     public function send_activation_code($mobile, $model, $setting_model = null)
@@ -92,11 +91,9 @@ class AuthService
             return serviceOk($user);
         } elseif (!$user) {
             return serviceError(trans('auth::messages.not_register'));
-
         } else {
             return serviceError(trans('auth::messages.wait_minutes'));
         }
-
     }
 
     public function check_activation_code($mobile, $activation_code, $model, $guard)
@@ -112,9 +109,7 @@ class AuthService
             return serviceError(trans('auth::messages.wrong_code'));
         } else {
             return serviceError(trans('auth::messages.not_register'));
-
         }
-
     }
 
     public function set_session($guard, $user)
@@ -131,14 +126,16 @@ class AuthService
 
         return response()
             ->json(serviceOk(true), 200)
-            ->cookie($cookie['name'],
+            ->cookie(
+                $cookie['name'],
                 $cookie['value'],
                 $cookie['minutes'],
                 $cookie['path'],
                 $cookie['domain'],
                 $cookie['secure'],
                 $cookie['httponly'],
-                $cookie['samesite'])
+                $cookie['samesite']
+            )
             ->cookie(
                 'expire_session',
                 '',
@@ -149,7 +146,6 @@ class AuthService
                 false,
                 $cookie['samesite']
             );
-
     }
 
     public function set_bearer_token($guard, $user)
@@ -172,5 +168,4 @@ class AuthService
             'samesite' => "none",
         ];
     }
-
 }
