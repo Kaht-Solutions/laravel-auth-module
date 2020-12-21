@@ -58,7 +58,6 @@ if (!function_exists('fa_num_to_en')) {
         $string = str_replace($persian1, $num, $string);
         return str_replace($persian2, $num, $string);
     }
-
 }
 
 /**Response Structure */
@@ -71,9 +70,7 @@ if (!function_exists('responseOk')) {
         }
 
         return response()->json(['is_successful' => true, 'data' => $data, 'message' => $message], $status);
-
     }
-
 }
 
 if (!function_exists('responseError')) {
@@ -81,37 +78,35 @@ if (!function_exists('responseError')) {
     function responseError($message, $status = 200)
     {
         return response()->json(['is_successful' => false, 'message' => $message, 'data' => []], $status);
-
     }
-
 }
 
 /**Service Return Structure */
 if (!function_exists('serviceOk')) {
 
-    function serviceOk($data)
+    function serviceOk($data, $status = 200)
     {
 
-        return ['is_successful' => true, 'data' => $data];
-
+        return ['is_successful' => true, 'data' => $data, 'status' => $status];
     }
-
 }
 
 if (!function_exists('serviceError')) {
 
-    function serviceError($message)
+    function serviceError($message, $status = 400)
     {
-        return ['is_successful' => false, 'message' => $message];
-
+        return ['is_successful' => false, 'message' => $message, 'status' => $status];
     }
-
 }
 
 if (!function_exists('make_absolute')) {
 
-    function make_absolute($url, $base = "http://empuka.ir")
+    function make_absolute($url, $base = null)
     {
+        if (!$base) {
+            $base = env('APP_URL');
+        }
+
         // Return base if no url
         if (!$url) {
             return $base;
@@ -148,12 +143,12 @@ if (!function_exists('make_absolute')) {
 
         // Replace '//' or '/./' or '/foo/../' with '/'
         $re = array('#(/\.?/)#', '#/(?!\.\.)[^/]+/\.\./#');
-        for ($n = 1; $n > 0; $abs = preg_replace($re, '/', $abs, -1, $n)) {}
+        for ($n = 1; $n > 0; $abs = preg_replace($re, '/', $abs, -1, $n)) {
+        }
 
         // Absolute URL is ready!
         return $scheme . '://' . $abs;
     }
-
 }
 
 if (!function_exists('upload_file')) {
@@ -180,7 +175,6 @@ if (!function_exists('upload_file')) {
             $image->move($destinationPath, $fileName);
             $image_url = parse_url(url($destinationPath) . '/' . $fileName, PHP_URL_PATH);
             return $image_url;
-
         } elseif ($base64_image) {
 
             $data = explode(',', $base64_image);
@@ -204,13 +198,11 @@ if (!function_exists('upload_file')) {
             $image_url = parse_url(url($destinationPath) . '/' . $fileName, PHP_URL_PATH);
 
             return $image_url;
-
         } elseif ($image != "" && $base64_image != "") {
             return false;
         }
         return false;
     }
-
 }
 
 if (!function_exists('delete_file')) {
@@ -229,7 +221,6 @@ if (!function_exists('delete_file')) {
             }
         }
     }
-
 }
 
 if (!function_exists('make_models')) {
@@ -251,8 +242,30 @@ if (!function_exists('make_models')) {
             }
 
             Artisan::call('krlove:generate:model ' . $model_name . ' --table-name=' . $table_name);
-
         }
     }
+}
 
+if (!function_exists('generateRandomNumberBasedOnDB')) {
+    function generateRandomNumberBasedOnDB($table, $column)
+    {
+        $number = mt_rand(1000000000, 9999999999); // better than rand()
+
+        // call the same function if the barcode exists already
+        if (randomNumberExistsInDB($number, $table, $column)) {
+            return generateRandomNumberBasedOnDB($table, $column);
+        }
+
+        // otherwise, it's valid and can be used
+        return $number;
+    }
+}
+
+if (!function_exists('barcodeNumberExists')) {
+    function randomNumberExistsInDB($number, $table, $column)
+    {
+        // query the database and return a boolean
+        // for instance, it might look like this in Laravel
+        return \DB::table($table)->where($column, $number)->count();
+    }
 }
