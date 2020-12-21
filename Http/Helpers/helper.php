@@ -101,8 +101,12 @@ if (!function_exists('serviceError')) {
 
 if (!function_exists('make_absolute')) {
 
-    function make_absolute($url, $base = "http://empuka.ir")
+    function make_absolute($url, $base = null)
     {
+        if (!$base) {
+            $base = env('APP_URL');
+        }
+
         // Return base if no url
         if (!$url) {
             return $base;
