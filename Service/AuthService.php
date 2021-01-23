@@ -21,7 +21,7 @@ class AuthService
         if ($valid->fails()) {
             return serviceError($valid->errors()->all());
         }
- 
+
         $user = Auth::guard($guard)
             ->attempt([$type => $data[$type], 'password' => $data['password']], false, false);
 
@@ -53,16 +53,13 @@ class AuthService
                 $user->$key = bcrypt($value);
             }
 
-            if ($key == 'birth_date') {
-                $birth_date = explode('/', $data['birth_date']);
-                $birth_date_g = \Morilog\Jalali\CalendarUtils::toGregorian($birth_date[0], $birth_date[1], $birth_date[2]);
-                $birth_date_g = Carbon::createFromDate($birth_date_g[0], $birth_date_g[1], $birth_date_g[2]);
-                $user->$key = $birth_date_g;
-            }
-
-            $isActivationCodeExist = Schema::connection("mysql")->hasColumn($model_obj->getTableName(), 'activation_code');
-            if ($isActivationCodeExist) {
-                $user->activation_code = 1111;
+            $is_activation_code_column_exist = Schema::connection("mysql")->hasColumn($model_obj->getTableName(), 'activation_code');
+            if ($is_activation_code_column_exist) {
+                if (env("APP_ENV") == "local") {
+                    $user->activation_code = 1111;
+                } else {
+                    $user->activation_code = mt_rand(1000, 9999);
+                }
             }
         }
 
@@ -71,9 +68,9 @@ class AuthService
         return serviceOk($user);
     }
 
-    public function send_activation_code($mobile, $model, $setting_model = null)
+    public function sendActivationCode($mobile, $model, $setting_model = null)
     {
-        $mobile = fa_num_to_en($mobile);
+        $mobile = ConvertPersianAndArabicToEnglishNumbers($mobile);
         $user = $model::where('mobile', $mobile)->first();
 
         if ($setting_model) {
@@ -84,8 +81,11 @@ class AuthService
 
         if ($user && ((time() - $user->updated_at) > $sms_period)) {
 
-            $user->activation_code = mt_rand(100, 999);
-            $user->activation_code = 1111;
+            if (env("APP_ENV") == "local") {
+                $user->activation_code = 1111;
+            } else {
+                $user->activation_code = mt_rand(1000, 9999);
+            }
 
             $user->save();
             return serviceOk($user);
@@ -96,10 +96,10 @@ class AuthService
         }
     }
 
-    public function check_activation_code($mobile, $activation_code, $model, $guard)
+    public function checkActivationCode($mobile, $activation_code, $model, $guard)
     {
-        $activation_code = fa_num_to_en($activation_code);
-        $mobile = fa_num_to_en($mobile);
+        $activation_code = ConvertPersianAndArabicToEnglishNumbers($activation_code);
+        $mobile = ConvertPersianAndArabicToEnglishNumbers($mobile);
 
         $user = $model::where(['mobile' => $mobile])->first();
 
@@ -112,13 +112,13 @@ class AuthService
         }
     }
 
-    public function set_session($guard, $user)
+    public function setSession($guard, $user)
     {
         Auth::guard($guard)->loginUsingId($user->id);
         return true;
     }
 
-    public function set_cookie_token($guard, $user)
+    public function setCookieToken($guard, $user)
     {
         $token = $user->createToken($guard . '_' . $user->id . '_cookie', [$guard])->accessToken;
 
@@ -148,22 +148,26 @@ class AuthService
             );
     }
 
-    public function set_bearer_token($guard, $user)
+    public function setBearerToken($guard, $user)
     {
-        $token = $user->createToken($guard . '_' . $user->id . '_bearer', [$guard])->accessToken;
-        return $token;
+        $token = $user->createToken($guard . '_' . $user->id . '_bearer', [$guard]);
+        return $token->accessToken;
     }
 
-    private function getCookieDetails($token)
+    private function getCookieDetails($token, $test_mode = true)
     {
+        if (env("APP_ENV") == "local") {
+            $secure = null; // for local
+        } else {
+            $secure = true; // for production
+        }
         return [
             'name' => '_token',
             'value' => $token,
             'minutes' => 1440,
             'path' => null,
             'domain' => null,
-            // 'secure' => true, // for production
-            'secure' => null, // for localhost
+            'secure' => $secure,
             'httponly' => true,
             'samesite' => "none",
         ];

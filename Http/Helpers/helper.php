@@ -2,26 +2,6 @@
 
 if (!function_exists('generateRandomString')) {
 
-    function FunctionName(Type $var = null)
-    {
-        // Schema::disableForeignKeyConstraints();
-
-        // $tableNames = Schema::getConnection()->getDoctrineSchemaManager()->listTableNames();
-
-        // foreach ($tableNames as $name) {
-        //     //if you don't want to truncate migrations
-        //     if ($name == 'migrations') {
-        //         continue;
-        //     }
-        //     DB::table($name)->truncate();
-        // }
-
-        // Schema::enableForeignKeyConstraints();
-
-    }
-}
-if (!function_exists('generateRandomString')) {
-
     function generateRandomString($length = 21)
     {
         $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -48,15 +28,14 @@ if (!function_exists('generateRandomStringWithTime')) {
     }
 }
 
-if (!function_exists('fa_num_to_en')) {
-
-    function fa_num_to_en($string)
+if (!function_exists('ConvertPersianAndArabicToEnglishNumbers')) {
+    function ConvertPersianAndArabicToEnglishNumbers($string)
     {
-        $persian1 = array('۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹');
-        $persian2 = array('٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩');
+        $persian = array('۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹');
+        $arabic = array('٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩');
         $num = range(0, 9);
-        $string = str_replace($persian1, $num, $string);
-        return str_replace($persian2, $num, $string);
+        $string = str_replace($persian, $num, $string);
+        return str_replace($arabic, $num, $string);
     }
 }
 
