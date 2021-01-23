@@ -29,8 +29,7 @@ class AuthServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->register(RouteServiceProvider::class);
-        require_once __DIR__ . '/../Http/Helpers/helper.php'; 
-
+        require_once __DIR__ . '/../Http/Helpers/helper.php';
     }
 
     /**
@@ -41,10 +40,11 @@ class AuthServiceProvider extends ServiceProvider
     protected function registerConfig()
     {
         $this->publishes([
-            __DIR__.'/../Config/config.php' => config_path('auth.php'),
+            __DIR__ . '/../Config/config.php' => config_path('auth.php'),
         ], 'config');
         $this->mergeConfigFrom(
-            __DIR__.'/../Config/config.php', 'auth'
+            __DIR__ . '/../Config/config.php',
+            'auth'
         );
     }
 
@@ -57,11 +57,11 @@ class AuthServiceProvider extends ServiceProvider
     {
         $viewPath = resource_path('views/modules/auth');
 
-        $sourcePath = __DIR__.'/../Resources/views';
+        $sourcePath = __DIR__ . '/../Resources/views';
 
         $this->publishes([
             $sourcePath => $viewPath
-        ],'views');
+        ], 'views');
 
         $this->loadViewsFrom(array_merge(array_map(function ($path) {
             return $path . '/modules/auth';
@@ -80,7 +80,7 @@ class AuthServiceProvider extends ServiceProvider
         if (is_dir($langPath)) {
             $this->loadTranslationsFrom($langPath, 'auth');
         } else {
-            $this->loadTranslationsFrom(__DIR__ .'/../Resources/lang', 'auth');
+            $this->loadTranslationsFrom(__DIR__ . '/../Resources/lang', 'auth');
         }
     }
 
@@ -91,7 +91,7 @@ class AuthServiceProvider extends ServiceProvider
      */
     public function registerFactories()
     {
-        if (! app()->environment('production')) {
+        if (!app()->environment('production')) {
             app(Factory::class)->load(__DIR__ . '/../Database/factories');
         }
     }

@@ -14,7 +14,7 @@ class User extends Authenticatable
     use HasRoles;
     use HasApiTokens;
 
-    protected $table = 'usermodule_users';
+    protected $table = 'user_module_users';
 
     public function getTableName()
     {
@@ -26,7 +26,9 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password',
+        'name',
+        'email',
+        'password',
     ];
 
     /**
@@ -35,15 +37,25 @@ class User extends Authenticatable
      * @var array
      */
     protected $hidden = [
-        'password', 'remember_token',
+        'password',
+        'remember_token',
     ];
 
-    public function role_finder()
+    /**
+     * The attributes that should be cast to native types.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+    ];
+
+    public function roleFinder()
     {
         return $this->hasMany('Role');
     }
 
-    public function role_ch($role_name)
+    public function roleCheck($role_name)
     {
 
         if ($this->hasRole([$role_name])) {
@@ -58,52 +70,5 @@ class User extends Authenticatable
         \DB::table('user_role_user')->where('user_id', $this->id)->delete();
 
         return $this;
-    }
-
-    // public function roles()
-    // {
-    //     return $this->belongsToMany('Modules\Auth\Models\Role');
-    // }
-
-    public function get_top_role($return_name = false)
-    {
-        if ($return_name) {
-            if ($this->hasRole('admin')) {
-                return 'مدیر کل';
-            } elseif ($this->hasRole('reseller')) {
-                return 'ریسلر';
-            } elseif ($this->hasRole('accountant')) {
-                $province = Province::find($this->province_id);
-                return 'حسابدار' . ' - ' . $province->name;
-            } elseif ($this->hasRole('head_accountant')) {
-                return 'حسابدار کل';
-            } elseif ($this->hasRole('province_manager')) {
-                $province = Province::find($this->province_id);
-                return 'مدیر استانی' . ' - ' . $province->name;
-            } elseif ($this->hasRole('backup')) {
-                $province = Province::find($this->province_id);
-                return 'پشتیبان' . ' - ' . $province->name;
-            } elseif ($this->hasRole('head_backup')) {
-                return 'پشتیبان کل';
-            }
-            return '';
-        } else {
-            if ($this->hasRole('admin')) {
-                return 'admin';
-            } elseif ($this->hasRole('reseller')) {
-                return 'seller';
-            } elseif ($this->hasRole('accountant')) {
-                return 'accountant';
-            } elseif ($this->hasRole('head_accountant')) {
-                return 'head_accountant';
-            } elseif ($this->hasRole('province_manager')) {
-                return 'province_manager';
-            } elseif ($this->hasRole('backup')) {
-                return 'backup';
-            } elseif ($this->hasRole('head_backup')) {
-                return 'head_backup';
-            }
-            return '';
-        }
     }
 }
