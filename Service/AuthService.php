@@ -68,18 +68,16 @@ class AuthService
         return serviceOk($user);
     }
 
-    public function sendActivationCode($mobile, $model, $setting_model = null)
+    public function sendActivationCode($mobile, $model, $setting_model = null, $sms_period = 30)
     {
         $mobile = ConvertPersianAndArabicToEnglishNumbers($mobile);
         $user = $model::where('mobile', $mobile)->first();
 
         if ($setting_model) {
             $sms_period = $setting_model::get('sms_period');
-        } else {
-            $sms_period = 30;
         }
 
-        if ($user && ((time() - $user->updated_at) > $sms_period)) {
+        if ($user && ((time() - $user->updated_at) > $sms_period) || $sms_period == 0) {
 
             if (env("APP_ENV") == "local") {
                 $user->activation_code = 1111;
