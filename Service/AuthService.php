@@ -22,8 +22,7 @@ class AuthService
             return serviceError($valid->errors()->all());
         }
 
-        $user = Auth::guard('web')
-            ->attempt([$type => $data[$type], 'password' => $data['password']], false, false);
+        $user = Auth::attempt([$type => $data[$type], 'password' => $data['password']], false, false);
 
         if ($user) {
             return serviceOk($user);
