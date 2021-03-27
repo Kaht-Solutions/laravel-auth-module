@@ -3,7 +3,6 @@
 namespace Modules\Auth\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Database\Eloquent\Factory;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -17,7 +16,6 @@ class AuthServiceProvider extends ServiceProvider
         $this->registerTranslations();
         $this->registerConfig();
         $this->registerViews();
-        // $this->registerFactories();
         $this->loadMigrationsFrom(__DIR__ . '/../Database/Migrations');
     }
 

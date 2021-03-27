@@ -17,15 +17,10 @@ Route::group([
 ], function ($api) {
 
     /**One Step */
-    Route::post('/admin/login', 'API\OneStepExampleController@login');
+    // Route::post('/admin/login', 'API\OneStepExampleController@login');
 
     /**Two Step */
-    Route::post('/manager/send_activation_code', 'API\TwoStepExampleController@send_activation_code');
-    Route::post('/manager/check_activation_code', 'API\TwoStepExampleController@check_activation_code');
-
-});
-
-Route::group(['middleware' => ['auth:api_public', 'scope:vue_public_scope,mobile_public_scope']], function () {
-    Route::any('/test', 'API\UserAuthController@login');
+    // Route::post('/manager/send_activation_code', 'API\TwoStepExampleController@send_activation_code');
+    // Route::post('/manager/check_activation_code', 'API\TwoStepExampleController@check_activation_code');
 
 });
