@@ -153,6 +153,8 @@ if (!function_exists('upload_file')) {
             $fileName = $obj_id . '_' . generateRandomString() . '.' . $extension;
             $image->move($destinationPath, $fileName);
             $image_url = parse_url(url($destinationPath) . '/' . $fileName, PHP_URL_PATH);
+            $image_url = str_replace("/public", "", $image_url);
+            $image_url = str_replace("public", "", $image_url);
             return $image_url;
         } elseif ($base64_image) {
 
@@ -176,6 +178,8 @@ if (!function_exists('upload_file')) {
             // return $output_file;
             $image_url = parse_url(url($destinationPath) . '/' . $fileName, PHP_URL_PATH);
 
+            $image_url = str_replace("/public", "", $image_url);
+            $image_url = str_replace("public", "", $image_url);
             return $image_url;
         } elseif ($image != "" && $base64_image != "") {
             return false;
