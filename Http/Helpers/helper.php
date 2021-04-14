@@ -88,7 +88,7 @@ if (!function_exists('make_absolute')) {
 
         // Return base if no url
         if (!$url) {
-            return $base;
+            return "";
         }
 
         // Return if already absolute URL
@@ -151,10 +151,7 @@ if (!function_exists('upload_file')) {
             $destinationPath = $folder_name;
             $extension = $image->getClientOriginalExtension();
             $fileName = $obj_id . '_' . generateRandomString() . '.' . $extension;
-            $image->move($destinationPath, $fileName);
-            $image_url = parse_url(url($destinationPath) . '/' . $fileName, PHP_URL_PATH);
-            $image_url = str_replace("/public", "", $image_url);
-            $image_url = str_replace("public", "", $image_url);
+            $image_url = $image->storeAs($destinationPath, $fileName, 'public');
             return $image_url;
         } elseif ($base64_image) {
 
