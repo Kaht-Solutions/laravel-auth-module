@@ -152,6 +152,7 @@ if (!function_exists('upload_file')) {
             $extension = $image->getClientOriginalExtension();
             $fileName = $obj_id . '_' . generateRandomString() . '.' . $extension;
             $image_url = $image->storeAs($destinationPath, $fileName, 'public');
+            $image_url = parse_url($image_url, PHP_URL_PATH);
             return $image_url;
         } elseif ($base64_image) {
 
